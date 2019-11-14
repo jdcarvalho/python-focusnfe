@@ -63,11 +63,13 @@ class BaseFocusNFEBase(object):
             raise FocusNFEException('500 - Erro de Servidor')
 
     def do_get_request(self, url, params=None, data=None):
-        pass
+        r = requests.get(url, params=params, auth=(self.api_key, ""))
+        return self.process_errors(response=r)
 
     def do_post_request(self, url, params=None, data=None):
         r = requests.post(url, params=params, data=data, auth=(self.api_key, ""))
         return self.process_errors(response=r)
 
-    def do_delete_request(self, url, params=None):
-        pass
+    def do_delete_request(self, url, data=None):
+        r = requests.delete(url, data=data, auth=(self.api_key, ""))
+        return self.process_errors(response=r)

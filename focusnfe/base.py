@@ -1,12 +1,11 @@
 import requests
-import json
 
 
 class FocusNFEException(Exception):
     pass
 
 
-class FocusNFEBase(object):
+class BaseFocusNFEBase(object):
 
     api_key = None
     environment = None
@@ -19,10 +18,10 @@ class FocusNFEBase(object):
 
     @property
     def base_uri(self):
-        if self.environment == FocusNFEBase.ENV_PRODUCTION:
-            return FocusNFEBase.PRD_URI
-        elif self.environment == FocusNFEBase.ENV_DEVELOPMENT:
-            return FocusNFEBase.DEV_URI
+        if self.environment == BaseFocusNFEBase.ENV_PRODUCTION:
+            return BaseFocusNFEBase.PRD_URI
+        elif self.environment == BaseFocusNFEBase.ENV_DEVELOPMENT:
+            return BaseFocusNFEBase.DEV_URI
         else:
             raise FocusNFEException('Programming Error: Development invalid or not set')
 
@@ -63,20 +62,12 @@ class FocusNFEBase(object):
         elif response.status_code == 500:
             raise FocusNFEException('500 - Erro de Servidor')
 
-    def do_get_request(self, url, params):
+    def do_get_request(self, url, params=None, data=None):
         pass
 
-    def do_post_request(self, url, params=None):
-        params = params if params else {}
-        params = {
-            'fields': json.dumps(params)
-        }
-        response = requests.post(url, data=params)
-        self.process_errors(response)
-        return response
+    def do_post_request(self, url, params=None, data=None):
+        r = requests.post(url, params=params, data=data, auth=(self.api_key, ""))
+        return self.process_errors(response=r)
 
-    def do_put_request(self, url, params):
-        pass
-
-    def do_delete_request(self, url, params):
+    def do_delete_request(self, url, params=None):
         pass

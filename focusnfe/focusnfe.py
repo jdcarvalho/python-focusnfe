@@ -1,4 +1,4 @@
-from focusnfe.base import BaseFocusNFEBase
+from focusnfe.api.base import BaseFocusNFEBase
 from focusnfe.api.nfse import Nfse
 
 

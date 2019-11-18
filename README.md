@@ -10,8 +10,7 @@ Para instalar a versão atual do Pypi utilize:
 
 # Dependências
 
-Python Requests
-URL Lib
+* python-requests - https://requests.readthedocs.io/pt_BR/latest/user/quickstart.html
 
 # Como contribuir?
 

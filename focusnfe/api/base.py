@@ -16,6 +16,10 @@ class BaseFocusNFEBase(object):
     ENV_PRODUCTION = 1
     ENV_DEVELOPMENT = 2
 
+    def digits_only(self, value):
+        aux = [str(s) for s in value if s.isdigit()]
+        return ''.join(aux)
+
     @property
     def base_uri(self):
         if self.environment == BaseFocusNFEBase.ENV_PRODUCTION:

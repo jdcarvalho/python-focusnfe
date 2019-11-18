@@ -32,8 +32,30 @@ class Nfse(BaseFocusNFEBase):
         REG_ME_EPP_SIMPLES,
     ]
 
+    RPS_DENTRO_SP = 'T'
+    RPS_FORA_SP = 'F'
+    RPS_DENTRO_SP_ISENTO = 'A'
+    RPS_FORA_SP_ISENTO = 'B'
+    RPS_DENTRO_SP_IMUNE = 'M'
+    RPS_FORA_SP_IMUNE = 'N'
+    RPS_DENTRO_SP_SUSPENSO = 'X'
+    RPS_FORA_SP_SUSPENSO = 'V'
+    RPS_EXPORTACAO = 'P'
+
+    ALL_RPS = [
+        RPS_DENTRO_SP,
+        RPS_FORA_SP,
+        RPS_DENTRO_SP_ISENTO,
+        RPS_FORA_SP_ISENTO,
+        RPS_DENTRO_SP_IMUNE,
+        RPS_FORA_SP_IMUNE,
+        RPS_DENTRO_SP_SUSPENSO,
+        RPS_FORA_SP_SUSPENSO,
+        RPS_EXPORTACAO,
+    ]
+
     def create_nfse(
-            self,
+            self, razao_social, natureza, optante_simples, incentivador_cultural=False, data_emissao=None
     ):
         pass
 

@@ -10,8 +10,8 @@ class BaseFocusNFEBase(object):
     api_key = None
     environment = None
 
-    PRD_URI = 'https://api.focusnfe.com.br/'
-    DEV_URI = 'https://homologacao.focusnfe.com.br/v2/nfse'
+    PRD_URI = 'https://api.focusnfe.com.br{0}'
+    DEV_URI = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
 
     ENV_PRODUCTION = 1
     ENV_DEVELOPMENT = 2

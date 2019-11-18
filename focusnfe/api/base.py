@@ -10,7 +10,7 @@ class BaseFocusNFEBase(object):
     api_key = None
     environment = None
 
-    PRD_URI = 'https://api.focusnfe.com.br{0}'
+    PRD_URI = 'https://api.focusnfe.com.br/v2/nfse/{0}'
     DEV_URI = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
 
     ENV_PRODUCTION = 1
@@ -28,6 +28,13 @@ class BaseFocusNFEBase(object):
     def __init__(self, api_key, environment):
         self.api_key = api_key
         self.environment = environment
+
+    def url(self, **kwargs):
+        reference = kwargs.pop('reference')
+        if reference:
+            return self.base_uri.format('?ref='+reference)
+        else:
+            return self.base_uri.format('')
 
     @staticmethod
     def load_testing_env_variables():

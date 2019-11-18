@@ -17,8 +17,11 @@ class BaseFocusNFEBase(object):
     ENV_DEVELOPMENT = 2
 
     def digits_only(self, value):
-        aux = [str(s) for s in value if s.isdigit()]
-        return ''.join(aux)
+        if isinstance(value, str):
+            aux = [str(s) for s in value if s.isdigit()]
+            return ''.join(aux)
+        else:
+            return ''
 
     @property
     def base_uri(self):

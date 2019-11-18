@@ -136,6 +136,18 @@ class Nfse(BaseFocusNFEBase):
                 'telefone': telefone,
             })
 
+        payload.update({
+            'endereco': {
+                'logradouro': kwargs.pop('tom_end_logradouro'),
+                'tipo_logradouro': kwargs.pop('tom_end_tipo'),
+                'numero': kwargs.pop('tom_end_numero'),
+                'bairro': kwargs.pop('tom_end_bairro'),
+                'codigo_municipio': kwargs.pop('tom_end_cod_municipio'),
+                'uf': kwargs.pop('tom_end_uf'),
+                'cep': self.digits_only(kwargs.pop('tom_end_cep', '')),
+            }
+        })
+
         return payload
 
     def _prepare_servico(self, **kwargs):
@@ -196,8 +208,8 @@ class Nfse(BaseFocusNFEBase):
             'optante_simples_nacional': optante_simples,
 
             'prestador': prestador,
-            'servico': servico,
             'tomador': tomador,
+            'servico': servico,
         }
 
         tributacao_rps = kwargs.pop('prest_rps')

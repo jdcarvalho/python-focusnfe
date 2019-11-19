@@ -67,7 +67,7 @@ class Nfse(BaseNFSeWrapper):
             if arg not in kwargs:
                 raise NFSeException(
                     'Argumento {0} não enviado ao prestador'.format(arg),
-                    code=NFSeException.EC_BAD_REQUEST,
+                    code=NFSeException.EC_INVALID_PRESTADOR,
                 )
 
         cnpj = kwargs.pop('prest_cnpj')
@@ -105,7 +105,7 @@ class Nfse(BaseNFSeWrapper):
             if arg not in kwargs:
                 raise NFSeException(
                     'Argumento {0} não enviado ao tomador'.format(arg),
-                    code=NFSeException.EC_BAD_REQUEST,
+                    code=NFSeException.EC_INVALID_TOMADOR,
                 )
         documento = kwargs.pop('tom_documento')
         documento = self.digits_only(documento)
@@ -168,7 +168,7 @@ class Nfse(BaseNFSeWrapper):
             if arg not in kwargs:
                 raise NFSeException(
                     'Argumento {0} não enviado no serviço'.format(arg),
-                    code=NFSeException.EC_BAD_REQUEST,
+                    code=NFSeException.EC_INVALID_SERVICE,
                 )
 
         total_servicos = kwargs.pop('serv_valor_servicos')
@@ -258,13 +258,14 @@ class Nfse(BaseNFSeWrapper):
             raise NFSeException(
                 'Natureza inválida. Valores aceitáveis são [{1}]'.format(
                     natureza, ','.join(Nfse.ALL_NATURES)
-                ), NFSeException.EC_BAD_REQUEST)
+                ),
+                code=NFSeException.EC_INVALID_NATURE)
 
         razao_social = kwargs.pop('prest_razao', '')
         if not razao_social:
             raise NFSeException(
                 '[{0}]: Razão Social não informada'.format('prest_razao'),
-                code=NFSeException.EC_BAD_REQUEST,
+                code=NFSeException.EC_INVALID_RAZAO,
             )
 
         incentivador_cultural = json.dumps(
@@ -278,7 +279,7 @@ class Nfse(BaseNFSeWrapper):
                 '{0}: Regime inválido. Valores aceitáveis são [{1}]'.format(
                     regime, ','.join(Nfse.ALL_REGIMES)
                 ),
-                code=NFSeException.EC_BAD_REQUEST)
+                code=NFSeException.EC_INVALID_REGIME)
 
         prestador = self._prepare_prestador(**kwargs)
         tomador = self._prepare_tomador(**kwargs)

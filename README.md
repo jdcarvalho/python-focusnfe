@@ -4,7 +4,7 @@ Este projeto tem como objetivo fazer a ligação entre o sistema de emissão de 
 linguagem python. Inicialmente irá compor somente os métodos de trabalho para notas fiscais de serviço, posteriormente 
 poderá englobar as demais funcionalidades. (Com ajuda dos interessados)
 
-Para instalar a versão atual do Pypi utilize:
+Para instalar a versão atual do Pypy utilize:
 
 ~~pip install python-focusnfe~~
 

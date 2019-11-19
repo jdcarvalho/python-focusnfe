@@ -38,8 +38,11 @@ class BaseFocusNFEBase(object):
 
     def url(self, **kwargs):
         reference = kwargs.pop('reference')
+        relative = kwargs.pop('relative')
         if reference:
             return self.base_uri.format('?ref='+reference)
+        elif relative:
+            return self.base_uri.format(relative)
         else:
             return self.base_uri.format('')
 

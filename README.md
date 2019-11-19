@@ -24,7 +24,7 @@ Para contribuir com o código é bem simples, basta montar o ambiente, aplicar a
     |_ _ env.focus
     |_ _ src
 
-Para criá-la
+Para criá-la você deve seguir os passos abaixo:
 
 1) Criar um ambiente virtual com python-virtualenv fora do diretório de código
     
@@ -50,7 +50,7 @@ Para criá-la
         cd foccusnfe/api/
         cp environment.sample.py environment.py
         
-6) Preencha as variáveis a fim de validar os testes unitários, sendo a principal delas o API_TOKEN do ambiente FocusNFe
+6) Preencha as variáveis a fim de validar os testes unitários, sendo a principal delas o **API_TOKEN** do ambiente FocusNFe
 
         
         environment = (

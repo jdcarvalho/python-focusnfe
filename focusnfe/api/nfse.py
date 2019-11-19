@@ -153,21 +153,97 @@ class Nfse(BaseFocusNFEBase):
     def _prepare_servico(self, **kwargs):
         mandatory = [
             'serv_descricao',
-            'serv_base_calculo',
+            'serv_valor_servicos',
             'serv_aliq_iss',
             'serv_valor_iss',
-            'serv_iss_retido',
             'serv_item_lista_servico',
-            'serv_cnae',
-            'serv_vlr_liquido',
-            'serv_vlr_bruto',
         ]
         for arg in mandatory:
             if arg not in kwargs:
                 raise FocusNFEException(
                     'Argumento {0} não enviado aos dados do serviço'.format(arg)
                 )
-        return dict()
+
+        payload = {
+            'discriminacao': kwargs.pop('serv_descricao'),
+            'valor_servicos': kwargs.pop('serv_valor_servicos'),
+            'item_lista_servico': kwargs.pop('serv_item_lista_servico'),
+            'base_calculo': kwargs.pop('serv_valor_servicos'),
+            'aliquota': kwargs.pop('serv_aliq_iss'),
+            'valor_iss': kwargs.pop('serv_valor_iss'),
+        }
+
+        valor_deducoes = kwargs.pop('serv_valor_deducoes')
+        if valor_deducoes:
+            payload.update({
+                'valor_deducoes': valor_deducoes,
+            })
+        valor_iss_retido = kwargs.pop('serv_iss_retido')
+        if valor_iss_retido:
+            payload.update({
+                'valor_iss_retido': valor_iss_retido,
+                'iss_retido': 'true',
+            })
+        else:
+            payload.update({
+                'iss_retido': 'false',
+            })
+        valor_pis = kwargs.pop('serv_valor_pis')
+        if valor_pis:
+            payload.update({
+                'valor_pis': valor_pis,
+            })
+        valor_cofins = kwargs.pop('serv_valor_cofins')
+        if valor_cofins:
+            payload.update({
+                'valor_cofins': valor_cofins,
+            })
+        valor_ir = kwargs.pop('serv_valor_ir')
+        if valor_ir:
+            payload.update({
+                'valor_ir': valor_ir,
+            })
+        valor_csll = kwargs.pop('serv_valor_cssl')
+        if valor_csll:
+            payload.update({
+                'valor_cssl': valor_csll,
+            })
+        outras_retencoes = kwargs.pop('serv_outras_retencoes')
+        if outras_retencoes:
+            payload.update({
+                'outras_retencoes': outras_retencoes,
+            })
+        desconto_incondicionado = kwargs.pop('serv_desconto_incondicionado')
+        if desconto_incondicionado:
+            payload.update({
+                'desconto_incondicionado': desconto_incondicionado,
+            })
+        desconto_condicionado = kwargs.pop('serv_desconto_condicionado')
+        if desconto_condicionado:
+            payload.update({
+                'desconto_condicionado': desconto_condicionado,
+            })
+        codigo_cnae = kwargs.pop('serv_codigo_cnae')
+        if codigo_cnae:
+            payload.update({
+                'codigo_cnae': codigo_cnae,
+            })
+        codigo_tributario_municipio = kwargs.pop('serv_codigo_tributario_municipio')
+        if codigo_tributario_municipio:
+            payload.update({
+                'codigo_tributario_municipio': codigo_tributario_municipio,
+            })
+        percentual_total_tributos = kwargs.pop('serv_percentual_total_tributos')
+        if percentual_total_tributos:
+            payload.update({
+                'percentual_total_tributos': percentual_total_tributos,
+            })
+        fonte_total_tributos = kwargs.pop('serv_fonte_total_tributos')
+        if fonte_total_tributos:
+            payload.update({
+                'fonte_total_tributos': fonte_total_tributos,
+            })
+        return payload
 
     def __prepare(self, **kwargs):
 

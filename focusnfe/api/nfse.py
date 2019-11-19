@@ -321,11 +321,23 @@ class Nfse(BaseFocusNFEBase):
         return response
 
     def get_nfse(self, reference):
+        if not reference:
+            raise FocusNFEException('Referência não informada')
         response = self.do_get_request(self.url(reference=reference))
         return response
 
-    def cancel_nfse(self):
-        pass
+    def cancel_nfse(self, reference, reason):
+        if not reference:
+            raise FocusNFEException('Referência não informada')
+        response = self.do_delete_request(self.url(reference=reference), data=json.dumps({
+            'justificativa': reason,
+        }))
+        return response
 
-    def resent_email(self):
-        pass
+    def resent_email(self, reference):
+        if not reference:
+            raise FocusNFEException('Referência não informada')
+        response = self.do_post_request(
+            self.url(relative='/{0}/email/'.format(reference))
+        )
+        return response

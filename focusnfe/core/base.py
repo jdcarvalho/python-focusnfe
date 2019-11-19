@@ -81,7 +81,8 @@ class BaseAPIWrapper(object):
         return self.process_errors(response=r)
 
     def do_post_request(self, url, params=None, data=None):
-        r = requests.post(url, params=params, data=data, auth=(self.api_key, ""))
+        r = requests.post(url, params=params, data=data,
+                          auth=(self.api_key, ""))
         return self.process_errors(response=r)
 
     def do_delete_request(self, url, data=None):

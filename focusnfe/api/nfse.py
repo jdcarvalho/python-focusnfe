@@ -66,7 +66,7 @@ class Nfse(BaseNFSeWrapper):
         for arg in mandatory:
             if arg not in kwargs:
                 raise NFSeException(
-                    'Argumento {0} não enviado aos dados do prestador'.format(arg),
+                    'Argumento {0} não enviado ao prestador'.format(arg),
                     code=NFSeException.EC_BAD_REQUEST,
                 )
 
@@ -104,7 +104,7 @@ class Nfse(BaseNFSeWrapper):
         for arg in mandatory:
             if arg not in kwargs:
                 raise NFSeException(
-                    'Argumento {0} não enviado aos dados do tomador'.format(arg),
+                    'Argumento {0} não enviado ao tomador'.format(arg),
                     code=NFSeException.EC_BAD_REQUEST,
                 )
         documento = kwargs.pop('tom_documento')
@@ -167,7 +167,7 @@ class Nfse(BaseNFSeWrapper):
         for arg in mandatory:
             if arg not in kwargs:
                 raise NFSeException(
-                    'Argumento {0} não enviado aos dados do serviço'.format(arg),
+                    'Argumento {0} não enviado no serviço'.format(arg),
                     code=NFSeException.EC_BAD_REQUEST,
                 )
 
@@ -237,7 +237,8 @@ class Nfse(BaseNFSeWrapper):
             payload.update({
                 'codigo_cnae': codigo_cnae,
             })
-        percentual_total_tributos = kwargs.pop('serv_percentual_total_tributos', '')
+        percentual_total_tributos = kwargs.pop(
+            'serv_percentual_total_tributos', '')
         if percentual_total_tributos:
             payload.update({
                 'percentual_total_tributos': percentual_total_tributos,
@@ -255,7 +256,7 @@ class Nfse(BaseNFSeWrapper):
 
         if natureza not in Nfse.ALL_NATURES:
             raise NFSeException(
-                'Natureza da Operação inválida. Valores aceitáveis são [{1}]'.format(
+                'Natureza inválida. Valores aceitáveis são [{1}]'.format(
                     natureza, ','.join(Nfse.ALL_NATURES)
                 ), NFSeException.EC_BAD_REQUEST)
 
@@ -266,13 +267,15 @@ class Nfse(BaseNFSeWrapper):
                 code=NFSeException.EC_BAD_REQUEST,
             )
 
-        incentivador_cultural = json.dumps(bool(kwargs.pop('prest_cultural', '')))
-        optante_simples = json.dumps(bool(kwargs.pop('prest_simples', '')))
+        incentivador_cultural = json.dumps(
+            bool(kwargs.pop('prest_cultural', '')))
+        optante_simples = json.dumps(
+            bool(kwargs.pop('prest_simples', '')))
 
         regime = kwargs.pop('prest_regime', '')
         if regime not in Nfse.ALL_REGIMES:
             raise NFSeException(
-                '{0}: Não é um regime de tributação válido. Valores aceitáveis são [{1}]'.format(
+                '{0}: Regime inválido. Valores aceitáveis são [{1}]'.format(
                     regime, ','.join(Nfse.ALL_REGIMES)
                 ),
                 code=NFSeException.EC_BAD_REQUEST)
@@ -300,7 +303,7 @@ class Nfse(BaseNFSeWrapper):
         if tributacao_rps:
             if tributacao_rps not in Nfse.ALL_RPS:
                 raise NFSeException(
-                    '{0} não é um código RPS válido. Valores aceitáveis são: [{1}]'.format(
+                    '{0} RPS inválido. Valores aceitáveis são: [{1}]'.format(
                         tributacao_rps, ','.join(Nfse.ALL_RPS)
                     ), code=NFSeException.EC_BAD_REQUEST)
             else:
@@ -325,7 +328,8 @@ class Nfse(BaseNFSeWrapper):
     def create_nfse(self, reference, **kwargs):
         payload_dict = self.__prepare(**kwargs)
         payload = json.dumps(payload_dict)
-        response = self.do_post_request(self.url(reference=reference), data=payload)
+        response = self.do_post_request(
+            self.url(reference=reference), data=payload)
         return response
 
     def get_nfse(self, reference):
@@ -348,9 +352,10 @@ class Nfse(BaseNFSeWrapper):
                 'Justificativa não informada',
                 NFSeException.EC_BAD_REQUEST,
             )
-        response = self.do_delete_request(self.url(reference=reference), data=json.dumps({
-            'justificativa': reason,
-        }))
+        response = self.do_delete_request(
+            self.url(reference=reference), data=json.dumps({
+                'justificativa': reason,
+            }))
         return response
 
     def resent_email(self, reference):

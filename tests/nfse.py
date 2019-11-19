@@ -15,9 +15,9 @@ class NFSeTestCase(TestCase):
     def test_create_nfse_dentro_municipio(self):
         r = self.focus.nfse.create_nfse(
             reference=uuid.uuid4().hex,
-            nfse_natureza=Nfse.NAT_FORA_MUNICIPIO,
+            nfse_natureza=Nfse.NAT_MUNICIPIO,
 
-            prest_razao='ACME - A Cornholio that mades Everything',
+            prest_razao=os.environ.get('PRESTADOR_RAZAO'),
             prest_cnpj=os.environ.get('PRESTADOR_CNPJ'),
             prest_cultural=False,
             prest_simples=True,

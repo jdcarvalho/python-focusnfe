@@ -22,9 +22,9 @@ class Nfse(BaseNFSeWrapper):
     REG_MICROEMPRESA = '1'
     REG_ESTIMATIVA = '2'
     REG_SOCIEDADE = '3'
-    REG_COOPERATIVA = '5'
-    REG_MEI = '6'
-    REG_ME_EPP_SIMPLES = '7'
+    REG_COOPERATIVA = '4'
+    REG_MEI = '5'
+    REG_ME_EPP_SIMPLES = '6'
 
     ALL_REGIMES = [
         REG_MICROEMPRESA,

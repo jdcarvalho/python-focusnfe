@@ -1,17 +1,12 @@
 import requests
 
-
-class FocusNFEException(Exception):
-    pass
+from focusnfe.exceptions.nfse import NFSeException
 
 
-class BaseFocusNFEBase(object):
+class BaseAPIWrapper(object):
 
     api_key = None
     environment = None
-
-    PRD_URI = 'https://api.focusnfe.com.br/v2/nfse/{0}'
-    DEV_URI = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
 
     ENV_PRODUCTION = 1
     ENV_DEVELOPMENT = 2
@@ -23,28 +18,9 @@ class BaseFocusNFEBase(object):
         else:
             return ''
 
-    @property
-    def base_uri(self):
-        if self.environment == BaseFocusNFEBase.ENV_PRODUCTION:
-            return BaseFocusNFEBase.PRD_URI
-        elif self.environment == BaseFocusNFEBase.ENV_DEVELOPMENT:
-            return BaseFocusNFEBase.DEV_URI
-        else:
-            raise FocusNFEException('Programming Error: Development invalid or not set')
-
     def __init__(self, api_key, environment):
         self.api_key = api_key
         self.environment = environment
-
-    def url(self, **kwargs):
-        reference = kwargs.pop('reference', '')
-        relative = kwargs.pop('relative', '')
-        if reference:
-            return self.base_uri.format('?ref='+reference)
-        elif relative:
-            return self.base_uri.format(relative)
-        else:
-            return self.base_uri.format('')
 
     @staticmethod
     def load_testing_env_variables():
@@ -65,19 +41,40 @@ class BaseFocusNFEBase(object):
         if response.status_code in [200, 201]:
             return r
         elif response.status_code == 400:
-            raise FocusNFEException('{0} - {1}'.format(r.get('codigo'), r.get('mensagem')))
+            raise NFSeException(
+                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                code=NFSeException.EC_BAD_REQUEST
+            )
         elif response.status_code == 403:
-            raise FocusNFEException('{0} - {1}'.format(r.get('codigo'), r.get('mensagem')))
+            raise NFSeException(
+                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                code=NFSeException.EC_FORBIDDEN
+            )
         elif response.status_code == 404:
-            raise FocusNFEException('{0} - {1}'.format(r.get('codigo'), r.get('mensagem')))
+            raise NFSeException(
+                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                code=NFSeException.EC_NOT_FOUND
+            )
         elif response.status_code == 415:
-            raise FocusNFEException('415 - Midia Invalida. JSON Mal formado')
+            raise NFSeException(
+                '415 - Midia Invalida. JSON Mal formado',
+                code=NFSeException.EC_BAD_REQUEST,
+            )
         elif response.status_code == 422:
-            raise FocusNFEException('{0} - {1}'.format(r.get('codigo'), r.get('mensagem')))
+            raise NFSeException(
+                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                code=NFSeException.EC_ALREADY_AUTHORIZED,
+            )
         elif response.status_code == 429:
-            raise FocusNFEException('429 - Excesso de requisicoes atingida. Whoa Cowboy!')
+            raise NFSeException(
+                '429 - Excesso de requisicoes atingida. Whoa Cowboy!',
+                code=NFSeException.EC_WHOA_COWBOY,
+            )
         elif response.status_code == 500:
-            raise FocusNFEException('500 - Erro de Servidor')
+            raise NFSeException(
+                '500 - Erro de Servidor',
+                code=NFSeException.EC_SERVER_ERROR,
+            )
 
     def do_get_request(self, url, params=None, data=None):
         r = requests.get(url, params=params, auth=(self.api_key, ""))

@@ -1,4 +1,4 @@
-from focusnfe.api.base import BaseFocusNFEBase
+from focusnfe.core.base import BaseAPIWrapper
 from focusnfe.api.cte import CTe
 from focusnfe.api.mdfe import MDFe
 from focusnfe.api.nfce import NFCe
@@ -6,7 +6,7 @@ from focusnfe.api.nfe import NFe
 from focusnfe.api.nfse import Nfse
 
 
-class FocusNFE(BaseFocusNFEBase):
+class FocusNFE(BaseAPIWrapper):
 
     _nfse = None
     _nfe = None

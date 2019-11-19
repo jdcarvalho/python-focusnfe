@@ -1,9 +1,10 @@
 import json
 from datetime import datetime
-from focusnfe.api.base import BaseFocusNFEBase, FocusNFEException
+from focusnfe.core import BaseNFSeWrapper
+from focusnfe.exceptions.nfse import NFSeException
 
 
-class Nfse(BaseFocusNFEBase):
+class Nfse(BaseNFSeWrapper):
 
     NAT_MUNICIPIO = '1'
     NAT_FORA_MUNICIPIO = '2'
@@ -64,8 +65,9 @@ class Nfse(BaseFocusNFEBase):
         ]
         for arg in mandatory:
             if arg not in kwargs:
-                raise FocusNFEException(
-                    'Argumento {0} não enviado aos dados do prestador'.format(arg)
+                raise NFSeException(
+                    'Argumento {0} não enviado aos dados do prestador'.format(arg),
+                    code=NFSeException.EC_BAD_REQUEST,
                 )
 
         cnpj = kwargs.pop('prest_cnpj')
@@ -101,8 +103,9 @@ class Nfse(BaseFocusNFEBase):
         ]
         for arg in mandatory:
             if arg not in kwargs:
-                raise FocusNFEException(
-                    'Argumento {0} não enviado aos dados do tomador'.format(arg)
+                raise NFSeException(
+                    'Argumento {0} não enviado aos dados do tomador'.format(arg),
+                    code=NFSeException.EC_BAD_REQUEST,
                 )
         documento = kwargs.pop('tom_documento')
         documento = self.digits_only(documento)
@@ -111,7 +114,10 @@ class Nfse(BaseFocusNFEBase):
         elif len(documento) == 14:
             document_name = 'cnpj'
         else:
-            raise FocusNFEException('Documento inválidp. Um documento precisa ter 11 ou 14 dígitos')
+            raise NFSeException(
+                'Documento inválidp. Um documento precisa ter 11 ou 14 dígitos',
+                code=NFSeException.EC_BAD_REQUEST,
+            )
 
         razao = kwargs.pop('tom_razao')
         email = kwargs.pop('tom_email')
@@ -160,8 +166,9 @@ class Nfse(BaseFocusNFEBase):
         ]
         for arg in mandatory:
             if arg not in kwargs:
-                raise FocusNFEException(
-                    'Argumento {0} não enviado aos dados do serviço'.format(arg)
+                raise NFSeException(
+                    'Argumento {0} não enviado aos dados do serviço'.format(arg),
+                    code=NFSeException.EC_BAD_REQUEST,
                 )
 
         total_servicos = kwargs.pop('serv_valor_servicos')
@@ -247,24 +254,28 @@ class Nfse(BaseFocusNFEBase):
         natureza = kwargs.pop('nfse_natureza', '')
 
         if natureza not in Nfse.ALL_NATURES:
-            raise FocusNFEException(
+            raise NFSeException(
                 'Natureza da Operação inválida. Valores aceitáveis são [{1}]'.format(
                     natureza, ','.join(Nfse.ALL_NATURES)
-                ))
+                ), NFSeException.EC_BAD_REQUEST)
 
         razao_social = kwargs.pop('prest_razao', '')
         if not razao_social:
-            raise FocusNFEException('[{0}]: Razão Social não informada'.format('prest_razao'))
+            raise NFSeException(
+                '[{0}]: Razão Social não informada'.format('prest_razao'),
+                code=NFSeException.EC_BAD_REQUEST,
+            )
 
         incentivador_cultural = json.dumps(bool(kwargs.pop('prest_cultural', '')))
         optante_simples = json.dumps(bool(kwargs.pop('prest_simples', '')))
 
         regime = kwargs.pop('prest_regime', '')
         if regime not in Nfse.ALL_REGIMES:
-            raise FocusNFEException(
+            raise NFSeException(
                 '{0}: Não é um regime de tributação válido. Valores aceitáveis são [{1}]'.format(
                     regime, ','.join(Nfse.ALL_REGIMES)
-                ))
+                ),
+                code=NFSeException.EC_BAD_REQUEST)
 
         prestador = self._prepare_prestador(**kwargs)
         tomador = self._prepare_tomador(**kwargs)
@@ -288,10 +299,10 @@ class Nfse(BaseFocusNFEBase):
         tributacao_rps = kwargs.pop('nfse_prest_rps', '')
         if tributacao_rps:
             if tributacao_rps not in Nfse.ALL_RPS:
-                raise FocusNFEException(
+                raise NFSeException(
                     '{0} não é um código RPS válido. Valores aceitáveis são: [{1}]'.format(
                         tributacao_rps, ','.join(Nfse.ALL_RPS)
-                    ))
+                    ), code=NFSeException.EC_BAD_REQUEST)
             else:
                 nfse.update({
                     'tributacao_rps': tributacao_rps,
@@ -319,15 +330,24 @@ class Nfse(BaseFocusNFEBase):
 
     def get_nfse(self, reference):
         if not reference:
-            raise FocusNFEException('Referência não informada')
+            raise NFSeException(
+                'Referência não informada',
+                code=NFSeException.EC_BAD_REQUEST
+            )
         response = self.do_get_request(self.url(reference=reference))
         return response
 
     def cancel_nfse(self, reference, reason):
         if not reference:
-            raise FocusNFEException('Referência não informada')
+            raise NFSeException(
+                'Referência não informada',
+                code=NFSeException.EC_BAD_REQUEST
+            )
         if not reason:
-            raise FocusNFEException('Justificativa não informada')
+            raise NFSeException(
+                'Justificativa não informada',
+                NFSeException.EC_BAD_REQUEST,
+            )
         response = self.do_delete_request(self.url(reference=reference), data=json.dumps({
             'justificativa': reason,
         }))
@@ -335,7 +355,10 @@ class Nfse(BaseFocusNFEBase):
 
     def resent_email(self, reference):
         if not reference:
-            raise FocusNFEException('Referência não informada')
+            raise NFSeException(
+                'Referência não informada',
+                code=NFSeException.EC_BAD_REQUEST
+            )
         response = self.do_post_request(
             self.url(relative='/{0}/email/'.format(reference))
         )

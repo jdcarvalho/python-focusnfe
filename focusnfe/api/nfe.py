@@ -1,6 +1,6 @@
-from focusnfe.api.base import BaseFocusNFEBase
+from focusnfe.core.base import BaseAPIWrapper
 
 
-class NFe(BaseFocusNFEBase):
+class NFe(BaseAPIWrapper):
     pass
 

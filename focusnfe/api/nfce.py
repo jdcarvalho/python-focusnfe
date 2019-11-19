@@ -1,6 +1,6 @@
-from focusnfe.api.base import BaseFocusNFEBase
+from focusnfe.core.base import BaseAPIWrapper
 
 
-class NFCe(BaseFocusNFEBase):
+class NFCe(BaseAPIWrapper):
     pass
 

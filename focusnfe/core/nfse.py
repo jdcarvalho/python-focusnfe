@@ -14,7 +14,10 @@ class BaseNFSeWrapper(BaseAPIWrapper):
         elif self.environment == BaseAPIWrapper.ENV_DEVELOPMENT:
             return BaseNFSeWrapper.DEV_URI
         else:
-            raise NFSeException('Programming Error: Development invalid or not set')
+            raise NFSeException(
+                'Programming Error: Development invalid or not set',
+                code=NFSeException.EC_PROGRAMMING,
+            )
 
     def url(self, **kwargs):
         reference = kwargs.pop('reference', '')

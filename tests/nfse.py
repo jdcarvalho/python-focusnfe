@@ -1,6 +1,5 @@
 from unittest import TestCase
 import os
-
 from focusnfe.api.nfse import Nfse
 from focusnfe.focusnfe import FocusNFE
 import uuid

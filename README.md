@@ -6,7 +6,9 @@ poderá englobar as demais funcionalidades. (Com ajuda dos interessados)
 
 Para instalar a versão atual do Pypi utilize:
 
-`pip install python-focusnfe`
+~~pip install python-focusnfe~~
+
+*Ainda em desenvolvimento. Não liberado no Pypy*
 
 # Dependências
 

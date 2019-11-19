@@ -95,8 +95,8 @@ class Nfse(BaseFocusNFEBase):
             'tom_end_cep',
             'tom_end_logradouro',
             'tom_end_tipo',
+            'tom_end_bairro',
             'tom_end_numero',
-            'tom_end_complemento',
             'tom_end_cod_municipio',
         ]
         for arg in mandatory:
@@ -122,14 +122,14 @@ class Nfse(BaseFocusNFEBase):
             'email': email,
         }
 
-        inscricao_municipal = kwargs.pop('tom_inscricao')
+        inscricao_municipal = kwargs.pop('tom_inscricao', '')
         inscricao_municipal = self.digits_only(inscricao_municipal)
         if inscricao_municipal:
             payload.update({
                 'inscricao_municipal': inscricao_municipal,
             })
 
-        telefone = kwargs.pop('tom_teleone')
+        telefone = kwargs.pop('tom_telefone', '')
         telefone = self.digits_only(telefone)
         if telefone:
             payload.update({
@@ -164,21 +164,23 @@ class Nfse(BaseFocusNFEBase):
                     'Argumento {0} não enviado aos dados do serviço'.format(arg)
                 )
 
+        total_servicos = kwargs.pop('serv_valor_servicos')
+
         payload = {
             'discriminacao': kwargs.pop('serv_descricao'),
-            'valor_servicos': kwargs.pop('serv_valor_servicos'),
+            'valor_servicos': total_servicos,
             'item_lista_servico': kwargs.pop('serv_item_lista_servico'),
-            'base_calculo': kwargs.pop('serv_valor_servicos'),
+            'base_calculo': total_servicos,
             'aliquota': kwargs.pop('serv_aliq_iss'),
             'valor_iss': kwargs.pop('serv_valor_iss'),
         }
 
-        valor_deducoes = kwargs.pop('serv_valor_deducoes')
+        valor_deducoes = kwargs.pop('serv_valor_deducoes', 0)
         if valor_deducoes:
             payload.update({
                 'valor_deducoes': valor_deducoes,
             })
-        valor_iss_retido = kwargs.pop('serv_iss_retido')
+        valor_iss_retido = kwargs.pop('serv_iss_retido', 0)
         if valor_iss_retido:
             payload.update({
                 'valor_iss_retido': valor_iss_retido,
@@ -188,57 +190,52 @@ class Nfse(BaseFocusNFEBase):
             payload.update({
                 'iss_retido': 'false',
             })
-        valor_pis = kwargs.pop('serv_valor_pis')
+        valor_pis = kwargs.pop('serv_valor_pis', 0)
         if valor_pis:
             payload.update({
                 'valor_pis': valor_pis,
             })
-        valor_cofins = kwargs.pop('serv_valor_cofins')
+        valor_cofins = kwargs.pop('serv_valor_cofins', 0)
         if valor_cofins:
             payload.update({
                 'valor_cofins': valor_cofins,
             })
-        valor_ir = kwargs.pop('serv_valor_ir')
+        valor_ir = kwargs.pop('serv_valor_ir', 0)
         if valor_ir:
             payload.update({
                 'valor_ir': valor_ir,
             })
-        valor_csll = kwargs.pop('serv_valor_cssl')
+        valor_csll = kwargs.pop('serv_valor_cssl', 0)
         if valor_csll:
             payload.update({
                 'valor_cssl': valor_csll,
             })
-        outras_retencoes = kwargs.pop('serv_outras_retencoes')
+        outras_retencoes = kwargs.pop('serv_outras_retencoes', 0)
         if outras_retencoes:
             payload.update({
                 'outras_retencoes': outras_retencoes,
             })
-        desconto_incondicionado = kwargs.pop('serv_desconto_incondicionado')
+        desconto_incondicionado = kwargs.pop('serv_desconto_incondicionado', '')
         if desconto_incondicionado:
             payload.update({
                 'desconto_incondicionado': desconto_incondicionado,
             })
-        desconto_condicionado = kwargs.pop('serv_desconto_condicionado')
+        desconto_condicionado = kwargs.pop('serv_desconto_condicionado', '')
         if desconto_condicionado:
             payload.update({
                 'desconto_condicionado': desconto_condicionado,
             })
-        codigo_cnae = kwargs.pop('serv_codigo_cnae')
+        codigo_cnae = kwargs.pop('serv_codigo_cnae', '')
         if codigo_cnae:
             payload.update({
                 'codigo_cnae': codigo_cnae,
             })
-        codigo_tributario_municipio = kwargs.pop('serv_codigo_tributario_municipio')
-        if codigo_tributario_municipio:
-            payload.update({
-                'codigo_tributario_municipio': codigo_tributario_municipio,
-            })
-        percentual_total_tributos = kwargs.pop('serv_percentual_total_tributos')
+        percentual_total_tributos = kwargs.pop('serv_percentual_total_tributos', '')
         if percentual_total_tributos:
             payload.update({
                 'percentual_total_tributos': percentual_total_tributos,
             })
-        fonte_total_tributos = kwargs.pop('serv_fonte_total_tributos')
+        fonte_total_tributos = kwargs.pop('serv_fonte_total_tributos', '')
         if fonte_total_tributos:
             payload.update({
                 'fonte_total_tributos': fonte_total_tributos,
@@ -251,7 +248,7 @@ class Nfse(BaseFocusNFEBase):
 
         if natureza not in Nfse.ALL_NATURES:
             raise FocusNFEException(
-                'Natureza da Operação {0} inválida. Valores aceitáveis são [{1}]'.format(
+                'Natureza da Operação inválida. Valores aceitáveis são [{1}]'.format(
                     natureza, ','.join(Nfse.ALL_NATURES)
                 ))
 
@@ -270,8 +267,8 @@ class Nfse(BaseFocusNFEBase):
                 ))
 
         prestador = self._prepare_prestador(**kwargs)
-        servico = self._prepare_servico(**kwargs)
         tomador = self._prepare_tomador(**kwargs)
+        servico = self._prepare_servico(**kwargs)
 
         str_emissao = datetime.now().isoformat()
 
@@ -288,7 +285,7 @@ class Nfse(BaseFocusNFEBase):
             'servico': servico,
         }
 
-        tributacao_rps = kwargs.pop('prest_rps')
+        tributacao_rps = kwargs.pop('nfse_prest_rps', '')
         if tributacao_rps:
             if tributacao_rps not in Nfse.ALL_RPS:
                 raise FocusNFEException(
@@ -300,13 +297,13 @@ class Nfse(BaseFocusNFEBase):
                     'tributacao_rps': tributacao_rps,
                 })
 
-        codigo_obra = kwargs.pop('serv_cod_obra')
+        codigo_obra = kwargs.pop('serv_cod_obra', '')
         if codigo_obra:
             nfse.update({
                 'codigo_obra': codigo_obra,
             })
 
-        art = kwargs.pop('serv_art')
+        art = kwargs.pop('serv_art', '')
         if art:
             nfse.update({
                 'art': art
@@ -314,10 +311,10 @@ class Nfse(BaseFocusNFEBase):
 
         return nfse
 
-    def create_nfse(self, **kwargs):
+    def create_nfse(self, reference, **kwargs):
         payload_dict = self.__prepare(**kwargs)
         payload = json.dumps(payload_dict)
-        response = self.do_post_request(self.url(), data=payload)
+        response = self.do_post_request(self.url(reference=reference), data=payload)
         return response
 
     def get_nfse(self, reference):

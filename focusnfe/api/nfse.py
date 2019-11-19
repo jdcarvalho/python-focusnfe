@@ -329,6 +329,8 @@ class Nfse(BaseFocusNFEBase):
     def cancel_nfse(self, reference, reason):
         if not reference:
             raise FocusNFEException('Referência não informada')
+        if not reason:
+            raise FocusNFEException('Justificativa não informada')
         response = self.do_delete_request(self.url(reference=reference), data=json.dumps({
             'justificativa': reason,
         }))

@@ -47,7 +47,7 @@ Para criá-la você deve seguir os passos abaixo:
         
 5) Criar o arquivo de variáveis de ambiente conforme o modelo
 
-        cd foccusnfe/api/
+        cd foccusnfe/
         cp environment.sample.py environment.py
         
 6) Preencha as variáveis a fim de validar os testes unitários, sendo a principal delas o **API_TOKEN** do ambiente FocusNFe

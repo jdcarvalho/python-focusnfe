@@ -9,11 +9,17 @@ class BaseNFSeWrapper(BaseAPIWrapper):
 
     @property
     def base_uri(self):
-        if self.environment == BaseAPIWrapper.ENV_PRODUCTION:
-            return BaseNFSeWrapper.PRD_URI
-        elif self.environment == BaseAPIWrapper.ENV_DEVELOPMENT:
-            return BaseNFSeWrapper.DEV_URI
-        else:
+        try:
+            if int(self.environment) == BaseAPIWrapper.ENV_PRODUCTION:
+                return BaseNFSeWrapper.PRD_URI
+            elif int(self.environment) == BaseAPIWrapper.ENV_DEVELOPMENT:
+                return BaseNFSeWrapper.DEV_URI
+            else:
+                raise NFSeException(
+                    'Programming Error: Development invalid or not set',
+                    code=NFSeException.EC_PROGRAMMING,
+                )
+        except:
             raise NFSeException(
                 'Programming Error: Development invalid or not set',
                 code=NFSeException.EC_PROGRAMMING,

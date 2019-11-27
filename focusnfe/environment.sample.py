@@ -2,7 +2,7 @@ from focusnfe.focusnfe import FocusNFE
 
 environment = (
     ('API_TOKEN', ''),
-    ('ENVIRONMENT', FocusNFE.ENV_DEVELOPMENT),
+    ('ENVIRONMENT', str(FocusNFE.ENV_DEVELOPMENT)),
     ('PRESTADOR_CNPJ', ''),
     ('PRESTADOR_COD_IBGE', ''),
     ('PRESTADOR_INSCRICAO', ''),

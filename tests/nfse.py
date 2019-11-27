@@ -67,6 +67,8 @@ class NFSeTestCase(TestCase):
             self.focus.nfse.create_nfse(
                 reference=uuid.uuid4().hex,
                 nfse_natureza=Nfse.NAT_MUNICIPIO,
+                prest_razao=os.environ.get('PRESTADOR_RAZAO'),
+                prest_cnpj=os.environ.get('PRESTADOR_CNPJ'),
                 prest_cultural=bool(os.environ.get('PRESTADOR_CULTURAL')),
                 prest_simples=bool(os.environ.get('PRESTADOR_SIMPLES')),
                 prest_regime=Nfse.REG_ME_EPP_SIMPLES,

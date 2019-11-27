@@ -37,13 +37,28 @@ class BaseAPIWrapper(object):
         :param response:
         :return:
         """
-        r = response.json()
+        import json
+        try:
+            r = response.json()
+        except:
+            r = {
+                'codigo': response.status_code,
+                'mensagem': response.text,
+            }
         if response.status_code in [200, 201]:
             return r
         elif response.status_code == 400:
             raise NFSeException(
                 '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
                 code=NFSeException.EC_BAD_REQUEST
+            )
+        elif response.status_code == 401:
+            raise NFSeException(
+                'The request is not authorized {0} - {1}'.format(
+                    r.get('codigo'),
+                    r.get('mensagem'),
+                ),
+                code=NFSeException.EC_FORBIDDEN
             )
         elif response.status_code == 403:
             raise NFSeException(

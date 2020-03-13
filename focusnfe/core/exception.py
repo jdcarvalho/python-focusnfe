@@ -11,4 +11,4 @@ class FocusNFECoreException(Exception):
 
     def __init__(self, *args, **kwargs):
         self.code = kwargs.pop('code', '')
-        super(FocusNFECoreException, self).__init__(*args, **kwargs)
+        super(FocusNFECoreException, self).__init__(*args)

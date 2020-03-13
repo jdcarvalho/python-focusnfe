@@ -1,5 +1,6 @@
 import requests
 
+from focusnfe.core.exception import FocusNFECoreException
 from focusnfe.exceptions.nfse import NFSeException
 
 
@@ -37,7 +38,6 @@ class BaseAPIWrapper(object):
         :param response:
         :return:
         """
-        import json
         try:
             r = response.json()
         except:
@@ -48,12 +48,12 @@ class BaseAPIWrapper(object):
         if response.status_code in [200, 201]:
             return r
         elif response.status_code == 400:
-            raise NFSeException(
+            raise FocusNFECoreException(
                 '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
-                code=NFSeException.EC_BAD_REQUEST
+                code=FocusNFECoreException.EC_BAD_REQUEST
             )
         elif response.status_code == 401:
-            raise NFSeException(
+            raise FocusNFECoreException(
                 'The request is not authorized {0} - {1}'.format(
                     r.get('codigo'),
                     r.get('mensagem'),
@@ -61,19 +61,19 @@ class BaseAPIWrapper(object):
                 code=NFSeException.EC_FORBIDDEN
             )
         elif response.status_code == 403:
-            raise NFSeException(
+            raise FocusNFECoreException(
                 '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
-                code=NFSeException.EC_FORBIDDEN
+                code=FocusNFECoreException.EC_FORBIDDEN
             )
         elif response.status_code == 404:
-            raise NFSeException(
+            raise FocusNFECoreException(
                 '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
-                code=NFSeException.EC_NOT_FOUND
+                code=FocusNFECoreException.EC_NOT_FOUND
             )
         elif response.status_code == 415:
-            raise NFSeException(
+            raise FocusNFECoreException(
                 '415 - Midia Invalida. JSON Mal formado',
-                code=NFSeException.EC_BAD_REQUEST,
+                code=FocusNFECoreException.EC_BAD_REQUEST,
             )
         elif response.status_code == 422:
             raise NFSeException(
@@ -86,9 +86,9 @@ class BaseAPIWrapper(object):
                 code=NFSeException.EC_WHOA_COWBOY,
             )
         elif response.status_code == 500:
-            raise NFSeException(
+            raise FocusNFECoreException(
                 '500 - Erro de Servidor',
-                code=NFSeException.EC_SERVER_ERROR,
+                code=FocusNFECoreException.EC_SERVER_ERROR,
             )
 
     def do_get_request(self, url, params=None, data=None):

@@ -1,3 +1,4 @@
+from focusnfe.api.webhook import WebHook
 from focusnfe.core.base import BaseAPIWrapper
 from focusnfe.api.cte import CTe
 from focusnfe.api.mdfe import MDFe
@@ -13,6 +14,7 @@ class FocusNFE(BaseAPIWrapper):
     _cte = None
     _mdfe = None
     _nfce = None
+    _webhook = None
 
     @property
     def nfse(self):
@@ -43,4 +45,10 @@ class FocusNFE(BaseAPIWrapper):
         if not self._nfce:
             self._nfce = NFCe(self.api_key, self.environment)
         return self._nfce
+
+    @property
+    def webhook(self):
+        if not self._webhook:
+            self._webhook = WebHook(self.api_key, self.environment)
+        return self._webhook
 

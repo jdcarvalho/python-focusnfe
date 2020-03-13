@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from focusnfe.core import BaseNFSeWrapper
 from focusnfe.exceptions.nfse import NFSeException
+from focusnfe.exceptions.webhook import WebHookException
 
 
 class Nfse(BaseNFSeWrapper):
@@ -256,8 +257,8 @@ class Nfse(BaseNFSeWrapper):
 
         if natureza not in Nfse.ALL_NATURES:
             raise NFSeException(
-                'Natureza inválida. Valores aceitáveis são [{1}]'.format(
-                    natureza, ','.join(Nfse.ALL_NATURES)
+                'Natureza inválida. Valores aceitáveis são [{0}]'.format(
+                    ','.join(Nfse.ALL_NATURES)
                 ),
                 code=NFSeException.EC_INVALID_NATURE)
 
@@ -329,8 +330,7 @@ class Nfse(BaseNFSeWrapper):
     def create_nfse(self, reference, **kwargs):
         payload_dict = self.__prepare(**kwargs)
         payload = json.dumps(payload_dict)
-        response = self.do_post_request(
-            self.url(reference=reference), data=payload)
+        response = self.do_post_request(self.url(reference=reference), data=payload)
         return response
 
     def get_nfse(self, reference):

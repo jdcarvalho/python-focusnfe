@@ -286,7 +286,8 @@ class Nfse(BaseNFSeWrapper):
         tomador = self._prepare_tomador(**kwargs)
         servico = self._prepare_servico(**kwargs)
 
-        str_emissao = datetime.now().isoformat()
+        data_emissao = kwargs.pop('data_emissao', datetime.now())
+        str_emissao = data_emissao.isoformat()
 
         nfse = {
             'data_emissao': str_emissao,

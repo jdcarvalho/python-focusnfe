@@ -17,7 +17,7 @@ setup(
     author='Larysson Alves',
     author_email='larysson.alves@e-north.com.br',
     install_requires=[
-        "requests>=2.22.0",
+        "requests>=2.18.0",
     ],
     url='https://github.com/devlarysson/python-focusnfe',
     packages=find_packages(),

@@ -1,11 +1,14 @@
 import json
 from datetime import datetime
-from focusnfe.core import BaseNFSeWrapper
+
+from focusnfe.core.base import BaseAPIWrapper
 from focusnfe.exceptions.nfse import NFSeException
-from focusnfe.exceptions.webhook import WebHookException
 
 
-class Nfse(BaseNFSeWrapper):
+class Nfse(BaseAPIWrapper):
+
+    PRD_URI = 'https://api.focusnfe.com.br/v2/nfse{0}'
+    DEV_URI = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
 
     NAT_MUNICIPIO = '1'
     NAT_FORA_MUNICIPIO = '2'
@@ -57,6 +60,16 @@ class Nfse(BaseNFSeWrapper):
         RPS_FORA_SP_SUSPENSO,
         RPS_EXPORTACAO,
     ]
+
+    def url(self, **kwargs):
+        reference = kwargs.pop('reference', '')
+        relative = kwargs.pop('relative', '')
+        if reference:
+            return self.base_uri.format('?ref='+reference)
+        elif relative:
+            return self.base_uri.format(relative)
+        else:
+            return self.base_uri.format('')
 
     def _prepare_prestador(self, **kwargs):
         mandatory = [
@@ -340,7 +353,7 @@ class Nfse(BaseNFSeWrapper):
                 'Referência não informada',
                 code=NFSeException.EC_BAD_REQUEST
             )
-        response = self.do_get_request(self.url(reference=reference))
+        response = self.do_get_request(self.url(relative='/' + reference))
         return response
 
     def cancel_nfse(self, reference, reason):
@@ -355,7 +368,7 @@ class Nfse(BaseNFSeWrapper):
                 NFSeException.EC_BAD_REQUEST,
             )
         response = self.do_delete_request(
-            self.url(reference=reference), data=json.dumps({
+            self.url(relative='/' + reference), data=json.dumps({
                 'justificativa': reason,
             }))
         return response

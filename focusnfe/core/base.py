@@ -12,16 +12,43 @@ class BaseAPIWrapper(object):
     ENV_PRODUCTION = 1
     ENV_DEVELOPMENT = 2
 
+    PRD_URI = ''
+    DEV_URI = ''
+
+    def __init__(self, api_key, environment):
+        self.api_key = api_key
+        self.environment = environment
+
+    @property
+    def base_uri(self):
+        try:
+            if int(self.environment) == BaseAPIWrapper.ENV_PRODUCTION:
+                return self.PRD_URI
+            elif int(self.environment) == BaseAPIWrapper.ENV_DEVELOPMENT:
+                return self.DEV_URI
+            else:
+                raise FocusNFECoreException(
+                    'Programming Error: Development invalid or not set',
+                    code=FocusNFECoreException.EC_PROGRAMMING,
+                )
+        except:
+            raise FocusNFECoreException(
+                'Programming Error: Development invalid or not set',
+                code=FocusNFECoreException.EC_PROGRAMMING,
+            )
+
+    def url(self):
+        raise FocusNFECoreException(
+            'Programming Error: Function URL not developed',
+            code=FocusNFECoreException.EC_PROGRAMMING
+        )
+
     def digits_only(self, value):
         if isinstance(value, str):
             aux = [str(s) for s in value if s.isdigit()]
             return ''.join(aux)
         else:
             return ''
-
-    def __init__(self, api_key, environment):
-        self.api_key = api_key
-        self.environment = environment
 
     @staticmethod
     def load_testing_env_variables():

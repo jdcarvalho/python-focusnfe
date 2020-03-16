@@ -1,7 +1,7 @@
 import json
 
 from focusnfe.core import BaseAPIWrapper
-from focusnfe.exceptions.webhook import WebHookException
+from focusnfe.exceptions import WebHookException
 
 
 class WebHook(BaseAPIWrapper):
@@ -16,31 +16,10 @@ class WebHook(BaseAPIWrapper):
         EVENT_NFSE
     ]
 
-    @property
-    def base_uri(self):
-        try:
-            if int(self.environment) == BaseAPIWrapper.ENV_PRODUCTION:
-                return WebHook.PRD_URI
-            elif int(self.environment) == BaseAPIWrapper.ENV_DEVELOPMENT:
-                return WebHook.DEV_URI
-            else:
-                raise WebHookException(
-                    'Programming Error: Development invalid or not set',
-                    code=WebHookException.EC_PROGRAMMING,
-                )
-        except:
-            raise WebHookException(
-                'Programming Error: Development invalid or not set',
-                code=WebHookException.EC_PROGRAMMING,
-            )
-
     def url(self, **kwargs):
-        reference = kwargs.pop('reference', '')
-        relative = kwargs.pop('relative', '')
-        if reference:
-            return self.base_uri.format('?ref=' + reference)
-        elif relative:
-            return self.base_uri.format(relative)
+        hook_id = kwargs.pop('hook_id', '')
+        if hook_id:
+            return self.base_uri.format('/' + hook_id)
         else:
             return self.base_uri.format('')
 

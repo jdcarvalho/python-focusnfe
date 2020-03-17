@@ -1,4 +1,4 @@
-from focusnfe.core import FocusNFECoreException
+from focusnfe.core.exception import FocusNFECoreException
 
 
 class WebHookException(FocusNFECoreException):

@@ -112,7 +112,7 @@ class NFSeTestCase(TestCase):
     def test_create_nfse_dentro_municipio(self):
         r = self.focus.nfse.create_nfse(
             reference=uuid.uuid4().hex,
-            nfse_natureza=Nfse.NAT_FORA_MUNICIPIO,
+            nfse_natureza=Nfse.NAT_MUNICIPIO,
 
             prest_razao=os.environ.get('PRESTADOR_RAZAO'),
             prest_cnpj=os.environ.get('PRESTADOR_CNPJ'),
@@ -143,6 +143,40 @@ class NFSeTestCase(TestCase):
         )
         self.assertTrue(r.status_code in [200, 201])
 
+    def test_create_nfse_fora_municipio(self):
+        r = self.focus.nfse.create_nfse(
+            reference=uuid.uuid4().hex,
+            nfse_natureza=Nfse.NAT_FORA_MUNICIPIO,
+
+            prest_razao=os.environ.get('PRESTADOR_RAZAO'),
+            prest_cnpj=os.environ.get('PRESTADOR_CNPJ'),
+            prest_cultural=bool(os.environ.get('PRESTADOR_CULTURAL')),
+            prest_simples=bool(os.environ.get('PRESTADOR_SIMPLES')),
+            prest_regime=Nfse.REG_ME_EPP_SIMPLES,
+            prest_cod_municipio=os.environ.get('PRESTADOR_COD_IBGE'),
+            prest_inscricao=os.environ.get('PRESTADOR_INSCRICAO'),
+
+            tom_documento=os.environ.get('TOMADOR_DOCUMENTO'),
+            tom_razao=os.environ.get('TOMADOR_NOME'),
+            tom_email=os.environ.get('TOMADOR_EMAIL'),
+            tom_telefone=os.environ.get('TOMADOR_TELEFONE'),
+            tom_end_logradouro=os.environ.get('TOMADOR_LOGRADOURO'),
+            tom_end_tipo='Rua',
+            tom_end_bairro=os.environ.get('TOMADOR_BAIRRO'),
+            tom_end_cod_municipio=os.environ.get('TOMADOR_COD_IBGE'),
+            tom_end_numero=os.environ.get('TOMADOR_NUMERO'),
+            tom_end_uf=os.environ.get('TOMADOR_UF'),
+            tom_end_cep=os.environ.get('TOMADOR_CEP'),
+
+            serv_descricao='Serviços especiais',
+            serv_valor_servicos=10,
+            serv_aliq_iss=2,
+            serv_valor_iss=0.2,
+            serv_item_lista_servico='0107',
+
+        )
+        self.assertTrue(r.status_code in [200, 201, 202])
+
     def test_get_nfse_invalid(self):
         r = self.focus.nfse.get_nfse('3f27a44966f9499f899eaec1577b4d4b')
         self.assertTrue(r.status_code in [200, 201])
@@ -150,3 +184,10 @@ class NFSeTestCase(TestCase):
     def test_cancel_nfse_valid(self):
         r = self.focus.nfse.cancel_nfse('3f27a44966f9499f899eaec1577b4d4b', 'Era um teste')
         self.assertTrue(r.status_code in [200, 201])
+
+    def test_download_xml_valid(self):
+        r = self.focus.nfse.get_nfse('a5966c092be84ff3954e71a0d4a49e8d')
+        file = None
+        if 'caminho_xml_nota_fiscal' in r:
+            file = self.focus.nfse.download_xml(r['caminho_xml_nota_fiscal'])
+        self.assertTrue(file is not None)

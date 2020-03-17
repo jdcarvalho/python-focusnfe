@@ -5,7 +5,6 @@ from focusnfe.exceptions.nfse import NFSeException
 
 
 class BaseAPIWrapper(object):
-
     api_key = None
     environment = None
 
@@ -70,7 +69,7 @@ class BaseAPIWrapper(object):
                 'codigo': response.status_code,
                 'mensagem': response.text,
             }
-        if response.status_code in [200, 201]:
+        if response.status_code in [200, 201, 202]:
             return r
         elif response.status_code == 400:
             raise FocusNFECoreException(
@@ -116,9 +115,13 @@ class BaseAPIWrapper(object):
                 code=FocusNFECoreException.EC_SERVER_ERROR,
             )
 
-    def do_get_request(self, url, params=None, data=None):
+    def do_get_request(self, url, params=None, data=None, download=False):
         r = requests.get(url, params=params, auth=(self.api_key, ""))
-        return self.process_errors(response=r)
+        if download:
+            result = r.content
+        else:
+            result = self.process_errors(response=r)
+        return result
 
     def do_post_request(self, url, params=None, data=None):
         r = requests.post(url, params=params, data=data,

@@ -12,8 +12,8 @@ class BaseAPIWrapper(object):
     ENV_PRODUCTION = 1
     ENV_DEVELOPMENT = 2
 
-    PRD_URI = ''
-    DEV_URI = ''
+    PRD_URI = 'https://api.focusnfe.com.br{0}'
+    DEV_URI = 'https://homologacao.focusnfe.com.br{0}'
 
     def __init__(self, api_key, environment):
         self.api_key = api_key
@@ -37,11 +37,9 @@ class BaseAPIWrapper(object):
                 code=FocusNFECoreException.EC_PROGRAMMING,
             )
 
-    def url(self):
-        raise FocusNFECoreException(
-            'Programming Error: Function URL not developed',
-            code=FocusNFECoreException.EC_PROGRAMMING
-        )
+    def url(self, **kwargs):
+        version = kwargs.pop('version', '')
+        return self.base_uri.format('/' + version)
 
     def digits_only(self, value):
         if isinstance(value, str):

@@ -2,6 +2,7 @@ import json
 
 from focusnfe.core import BaseAPIWrapper
 from focusnfe.exceptions import WebHookException
+from focusnfe.utils.encoders import DecimalEncoder
 
 
 class WebHook(BaseAPIWrapper):
@@ -69,6 +70,6 @@ class WebHook(BaseAPIWrapper):
 
     def create_webhook(self, **kwargs):
         payload_dict = self.__prepare_webhook(**kwargs)
-        payload = json.dumps(payload_dict)
+        payload = json.dumps(payload_dict, cls=DecimalEncoder)
         response = self.do_post_request(self.url(), data=payload)
         return response

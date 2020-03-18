@@ -3,6 +3,7 @@ from datetime import datetime
 
 from focusnfe.core.base import BaseAPIWrapper
 from focusnfe.exceptions.nfse import NFSeException
+from focusnfe.utils.encoders import DecimalEncoder
 
 
 class Nfse(BaseAPIWrapper):
@@ -342,7 +343,7 @@ class Nfse(BaseAPIWrapper):
 
     def create_nfse(self, reference, **kwargs):
         payload_dict = self.__prepare(**kwargs)
-        payload = json.dumps(payload_dict)
+        payload = json.dumps(payload_dict, cls=DecimalEncoder)
         response = self.do_post_request(self.url(reference=reference), data=payload)
         return response
 

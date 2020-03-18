@@ -11,8 +11,8 @@ class BaseAPIWrapper(object):
     ENV_PRODUCTION = 1
     ENV_DEVELOPMENT = 2
 
-    PRD_URI = 'https://api.focusnfe.com.br{0}'
-    DEV_URI = 'https://homologacao.focusnfe.com.br{0}'
+    URI_PRODUCTION = 'https://api.focusnfe.com.br/'
+    URI_DEVELOPMENT = 'https://homologacao.focusnfe.com.br/'
 
     def __init__(self, api_key, environment):
         self.api_key = api_key
@@ -22,9 +22,9 @@ class BaseAPIWrapper(object):
     def base_uri(self):
         try:
             if int(self.environment) == BaseAPIWrapper.ENV_PRODUCTION:
-                return self.PRD_URI
+                return self.URI_PRODUCTION
             elif int(self.environment) == BaseAPIWrapper.ENV_DEVELOPMENT:
-                return self.DEV_URI
+                return self.URI_DEVELOPMENT
             else:
                 raise FocusNFECoreException(
                     'Programming Error: Development invalid or not set',
@@ -37,8 +37,10 @@ class BaseAPIWrapper(object):
             )
 
     def url(self, **kwargs):
-        version = kwargs.pop('version', '')
-        return self.base_uri.format('/' + version)
+        raise FocusNFECoreException(
+            'Programming Error: Url not implemented',
+            code=FocusNFECoreException.EC_PROGRAMMING
+        )
 
     def digits_only(self, value):
         if isinstance(value, str):
@@ -115,17 +117,12 @@ class BaseAPIWrapper(object):
                 code=FocusNFECoreException.EC_SERVER_ERROR,
             )
 
-    def do_get_request(self, url, params=None, data=None, download=False):
+    def do_get_request(self, url, params=None, data=None):
         r = requests.get(url, params=params, auth=(self.api_key, ""))
-        if download:
-            result = r.content
-        else:
-            result = self.process_errors(response=r)
-        return result
+        return self.process_errors(response=r)
 
     def do_post_request(self, url, params=None, data=None):
-        r = requests.post(url, params=params, data=data,
-                          auth=(self.api_key, ""))
+        r = requests.post(url, params=params, data=data, auth=(self.api_key, ""))
         return self.process_errors(response=r)
 
     def do_delete_request(self, url, data=None):

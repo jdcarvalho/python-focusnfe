@@ -1,14 +1,13 @@
 import json
 from datetime import datetime
 
-from focusnfe.core import FocusNFECoreException
 from focusnfe.core.base import BaseAPIWrapper
 from focusnfe.exceptions.nfse import NFSeException
 
 
 class Nfse(BaseAPIWrapper):
-    # PRD_URI = 'https://api.focusnfe.com.br/v2/nfse{0}'
-    # DEV_URI = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
+    URI_PRODUCTION = 'https://api.focusnfe.com.br/v2/nfse{0}'
+    URI_DEVELOPMENT = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
 
     NAT_MUNICIPIO = '1'
     NAT_FORA_MUNICIPIO = '2'
@@ -62,23 +61,14 @@ class Nfse(BaseAPIWrapper):
     ]
 
     def url(self, **kwargs):
-        api_version = kwargs.pop('version', 'v2')
         reference = kwargs.pop('reference', '')
         relative = kwargs.pop('relative', '')
-        url = super(Nfse, self).url(version=api_version)
-
-        if (reference or relative) and not api_version:
-            raise FocusNFECoreException(
-                'Versão da API não informada',
-                code=FocusNFECoreException.EC_PROGRAMMING
-            )
-
         if reference:
-            return '{0}{1}'.format(url, '/nfse?ref=' + reference)
+            return self.base_uri.format('?ref='+reference)
         elif relative:
-            return '{0}{1}'.format(url, '/nfse' + relative)
+            return self.base_uri.format(relative)
         else:
-            return url
+            return self.base_uri.format('')
 
     def _prepare_prestador(self, **kwargs):
         mandatory = [
@@ -392,18 +382,4 @@ class Nfse(BaseAPIWrapper):
             self.url(relative='/{0}/email/'.format(reference))
         )
         return response
-
-    def download_xml(self, path):
-        import tempfile
-        if not path:
-            raise NFSeException(
-                'Caminho do XML não informado.',
-                code=NFSeException.EC_PROGRAMMING
-            )
-
-        content = self.do_get_request(self.url(version='') + path, download=True)
-        file = tempfile.TemporaryFile('wb+')
-        file.write(content)
-        file.close()
-        return file
 

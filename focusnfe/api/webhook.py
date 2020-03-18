@@ -5,8 +5,8 @@ from focusnfe.exceptions import WebHookException
 
 
 class WebHook(BaseAPIWrapper):
-    PRD_URI = 'https://api.focusnfe.com.br/v2/hooks'
-    DEV_URI = 'https://homologacao.focusnfe.com.br/v2/hooks'
+    URI_PRODUCTION = 'https://api.focusnfe.com.br/v2/hooks'
+    URI_DEVELOPMENT = 'https://homologacao.focusnfe.com.br/v2/hooks'
 
     EVENT_NFE = 'nfe'
     EVENT_NFSE = 'nfse'

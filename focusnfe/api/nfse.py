@@ -373,14 +373,20 @@ class Nfse(BaseAPIWrapper):
             }))
         return response
 
-    def resent_email(self, reference):
+    def resent_email(self, reference, emails):
         if not reference:
             raise NFSeException(
                 'Referência não informada',
                 code=NFSeException.EC_BAD_REQUEST
             )
+        if emails and not isinstance(emails, list):
+            raise NFSeException(
+                'Emails não é um objeto lista',
+                code=NFSeException.EC_PROGRAMMING
+            )
         response = self.do_post_request(
-            self.url(relative='/{0}/email/'.format(reference))
+            self.url(relative='/{0}/email/'.format(reference)),
+            data=json.dumps({'emails': emails})
         )
         return response
 

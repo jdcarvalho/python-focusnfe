@@ -379,14 +379,18 @@ class Nfse(BaseAPIWrapper):
                 'Referência não informada',
                 code=NFSeException.EC_BAD_REQUEST
             )
-        if emails and not isinstance(emails, list):
-            raise NFSeException(
-                'Emails não é um objeto lista',
-                code=NFSeException.EC_PROGRAMMING
-            )
+
+        if emails:
+            if not isinstance(emails, list):
+                raise NFSeException(
+                    'Emails não é um objeto lista',
+                    code=NFSeException.EC_PROGRAMMING
+                )
+            emails = json.dumps({'emails': emails})
+
         response = self.do_post_request(
             self.url(relative='/{0}/email/'.format(reference)),
-            data=json.dumps({'emails': emails})
+            data=emails
         )
         return response
 

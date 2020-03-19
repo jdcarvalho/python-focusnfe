@@ -141,7 +141,7 @@ class NFSeTestCase(TestCase):
             serv_item_lista_servico='0107',
 
         )
-        self.assertTrue(r.status_code in [200, 201])
+        self.assertTrue(r['status_code'] in [200, 201])
 
     def test_create_nfse_fora_municipio(self):
         r = self.focus.nfse.create_nfse(
@@ -175,19 +175,16 @@ class NFSeTestCase(TestCase):
             serv_item_lista_servico='0107',
 
         )
-        self.assertTrue(r.status_code in [200, 201, 202])
+        self.assertTrue(r['status_code'] in [200, 201, 202])
 
     def test_get_nfse_invalid(self):
-        r = self.focus.nfse.get_nfse('3f27a44966f9499f899eaec1577b4d4b')
-        self.assertTrue(r.status_code in [200, 201])
+        r = self.focus.nfse.get_nfse('xxx')
+        self.assertTrue(r['status_code'] in [200, 201])
 
-    def test_cancel_nfse_valid(self):
-        r = self.focus.nfse.cancel_nfse('3f27a44966f9499f899eaec1577b4d4b', 'Era um teste')
-        self.assertTrue(r.status_code in [200, 201])
+    def test_cancel_nfse_invalid(self):
+        r = self.focus.nfse.cancel_nfse('7', 'Testando')
+        self.assertTrue(r['status_code'] in [200, 201])
 
-    def test_download_xml_valid(self):
-        r = self.focus.nfse.get_nfse('a5966c092be84ff3954e71a0d4a49e8d')
-        file = None
-        if 'caminho_xml_nota_fiscal' in r:
-            file = self.focus.nfse.download_xml(r['caminho_xml_nota_fiscal'])
-        self.assertTrue(file is not None)
+    def test_resend_email(self):
+        r = self.focus.nfse.resent_email('8')
+        self.assertTrue(r['status_code'] in [200, 201])

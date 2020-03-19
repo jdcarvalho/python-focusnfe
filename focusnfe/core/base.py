@@ -64,56 +64,48 @@ class BaseAPIWrapper(object):
         :param response:
         :return:
         """
-        try:
-            r = response.json()
-        except:
-            r = {
-                'codigo': response.status_code,
-                'mensagem': response.text,
-            }
         if response.status_code in [200, 201, 202]:
+            r = response.json()
+            r.update({'status_code': response.status_code})
             return r
         elif response.status_code == 400:
             raise FocusNFECoreException(
-                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                '{0} - {1}'.format(response.status_code, response.text),
                 code=FocusNFECoreException.EC_BAD_REQUEST
             )
         elif response.status_code == 401:
             raise FocusNFECoreException(
-                'The request is not authorized {0} - {1}'.format(
-                    r.get('codigo'),
-                    r.get('mensagem'),
-                ),
+                'Requisição não autorizada {0} - {1}'.format(response.status_code, response.text),
                 code=NFSeException.EC_FORBIDDEN
             )
         elif response.status_code == 403:
             raise FocusNFECoreException(
-                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                '{0} - {1}'.format(response.status_code, response.text),
                 code=FocusNFECoreException.EC_FORBIDDEN
             )
         elif response.status_code == 404:
             raise FocusNFECoreException(
-                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                '{0} - {1}'.format(response.status_code, response.text),
                 code=FocusNFECoreException.EC_NOT_FOUND
             )
         elif response.status_code == 415:
             raise FocusNFECoreException(
-                '415 - Midia Invalida. JSON Mal formado',
+                '{0} - Midia Invalida. JSON Mal formado'.format(response.status_code),
                 code=FocusNFECoreException.EC_BAD_REQUEST,
             )
         elif response.status_code == 422:
             raise NFSeException(
-                '{0} - {1}'.format(r.get('codigo'), r.get('mensagem')),
+                '{0} - {1}'.format(response.status_code, response.text),
                 code=NFSeException.EC_ALREADY_AUTHORIZED,
             )
         elif response.status_code == 429:
             raise NFSeException(
-                '429 - Excesso de requisicoes atingida. Whoa Cowboy!',
+                '{0} - Excesso de requisicoes atingida. Whoa Cowboy!'.format(response.status_code),
                 code=NFSeException.EC_WHOA_COWBOY,
             )
         elif response.status_code == 500:
             raise FocusNFECoreException(
-                '500 - Erro de Servidor',
+                '{0} - Erro de Servidor'.format(response.status_code),
                 code=FocusNFECoreException.EC_SERVER_ERROR,
             )
 

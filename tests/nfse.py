@@ -182,9 +182,9 @@ class NFSeTestCase(TestCase):
         self.assertTrue(r['status_code'] in [200, 201])
 
     def test_cancel_nfse_invalid(self):
-        r = self.focus.nfse.cancel_nfse('7', 'Testando')
+        r = self.focus.nfse.cancel_nfse('xxx', 'Testando')
         self.assertTrue(r['status_code'] in [200, 201])
 
-    def test_resend_email(self):
-        r = self.focus.nfse.resent_email('8')
+    def test_resend_email_invalid(self):
+        r = self.focus.nfse.resent_email('xxx')
         self.assertTrue(r['status_code'] in [200, 201])

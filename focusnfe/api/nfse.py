@@ -373,7 +373,7 @@ class Nfse(BaseAPIWrapper):
             }))
         return response
 
-    def resent_email(self, reference, emails):
+    def resent_email(self, reference, emails=None):
         if not reference:
             raise NFSeException(
                 'Referência não informada',

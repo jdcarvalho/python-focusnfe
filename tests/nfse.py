@@ -130,15 +130,61 @@ class NFSeTestCase(TestCase):
             tom_end_tipo='Rua',
             tom_end_bairro=os.environ.get('TOMADOR_BAIRRO'),
             tom_end_cod_municipio=os.environ.get('TOMADOR_COD_IBGE'),
-            tom_end_numero=os.environ.get('TOMADOR_NUMBERO'),
+            tom_end_numero=os.environ.get('TOMADOR_NUMERO'),
             tom_end_uf=os.environ.get('TOMADOR_UF'),
             tom_end_cep=os.environ.get('TOMADOR_CEP'),
 
             serv_descricao='Serviços especiais',
-            serv_valor_servicos=2,
-            serv_aliq_iss=3.5,
-            serv_valor_iss=0.07,
-            serv_item_lista_servico='0104',
+            serv_valor_servicos=10,
+            serv_aliq_iss=2,
+            serv_valor_iss=0.2,
+            serv_item_lista_servico='0107',
 
         )
-        self.assertTrue(r.status_code in [200, 201])
+        self.assertTrue(r['status_code'] in [200, 201])
+
+    def test_create_nfse_fora_municipio(self):
+        r = self.focus.nfse.create_nfse(
+            reference=uuid.uuid4().hex,
+            nfse_natureza=Nfse.NAT_FORA_MUNICIPIO,
+
+            prest_razao=os.environ.get('PRESTADOR_RAZAO'),
+            prest_cnpj=os.environ.get('PRESTADOR_CNPJ'),
+            prest_cultural=bool(os.environ.get('PRESTADOR_CULTURAL')),
+            prest_simples=bool(os.environ.get('PRESTADOR_SIMPLES')),
+            prest_regime=Nfse.REG_ME_EPP_SIMPLES,
+            prest_cod_municipio=os.environ.get('PRESTADOR_COD_IBGE'),
+            prest_inscricao=os.environ.get('PRESTADOR_INSCRICAO'),
+
+            tom_documento=os.environ.get('TOMADOR_DOCUMENTO'),
+            tom_razao=os.environ.get('TOMADOR_NOME'),
+            tom_email=os.environ.get('TOMADOR_EMAIL'),
+            tom_telefone=os.environ.get('TOMADOR_TELEFONE'),
+            tom_end_logradouro=os.environ.get('TOMADOR_LOGRADOURO'),
+            tom_end_tipo='Rua',
+            tom_end_bairro=os.environ.get('TOMADOR_BAIRRO'),
+            tom_end_cod_municipio=os.environ.get('TOMADOR_COD_IBGE'),
+            tom_end_numero=os.environ.get('TOMADOR_NUMERO'),
+            tom_end_uf=os.environ.get('TOMADOR_UF'),
+            tom_end_cep=os.environ.get('TOMADOR_CEP'),
+
+            serv_descricao='Serviços especiais',
+            serv_valor_servicos=10,
+            serv_aliq_iss=2,
+            serv_valor_iss=0.2,
+            serv_item_lista_servico='0107',
+
+        )
+        self.assertTrue(r['status_code'] in [200, 201, 202])
+
+    def test_get_nfse_invalid(self):
+        r = self.focus.nfse.get_nfse('xxx')
+        self.assertTrue(r['status_code'] in [200, 201])
+
+    def test_cancel_nfse_invalid(self):
+        r = self.focus.nfse.cancel_nfse('xxx', 'Testando')
+        self.assertTrue(r['status_code'] in [200, 201])
+
+    def test_resend_email_invalid(self):
+        r = self.focus.nfse.resent_email('xxx')
+        self.assertTrue(r['status_code'] in [200, 201])

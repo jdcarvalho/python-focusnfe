@@ -1,10 +1,14 @@
 import json
 from datetime import datetime
-from focusnfe.core import BaseNFSeWrapper
+
+from focusnfe.core.base import BaseAPIWrapper
 from focusnfe.exceptions.nfse import NFSeException
+from focusnfe.utils.encoders import DecimalEncoder
 
 
-class Nfse(BaseNFSeWrapper):
+class Nfse(BaseAPIWrapper):
+    URI_PRODUCTION = 'https://api.focusnfe.com.br/v2/nfse{0}'
+    URI_DEVELOPMENT = 'https://homologacao.focusnfe.com.br/v2/nfse{0}'
 
     NAT_MUNICIPIO = '1'
     NAT_FORA_MUNICIPIO = '2'
@@ -56,6 +60,16 @@ class Nfse(BaseNFSeWrapper):
         RPS_FORA_SP_SUSPENSO,
         RPS_EXPORTACAO,
     ]
+
+    def url(self, **kwargs):
+        reference = kwargs.pop('reference', '')
+        relative = kwargs.pop('relative', '')
+        if reference:
+            return self.base_uri.format('?ref='+reference)
+        elif relative:
+            return self.base_uri.format(relative)
+        else:
+            return self.base_uri.format('')
 
     def _prepare_prestador(self, **kwargs):
         mandatory = [
@@ -256,8 +270,8 @@ class Nfse(BaseNFSeWrapper):
 
         if natureza not in Nfse.ALL_NATURES:
             raise NFSeException(
-                'Natureza inválida. Valores aceitáveis são [{1}]'.format(
-                    natureza, ','.join(Nfse.ALL_NATURES)
+                'Natureza inválida. Valores aceitáveis são [{0}]'.format(
+                    ','.join(Nfse.ALL_NATURES)
                 ),
                 code=NFSeException.EC_INVALID_NATURE)
 
@@ -285,7 +299,8 @@ class Nfse(BaseNFSeWrapper):
         tomador = self._prepare_tomador(**kwargs)
         servico = self._prepare_servico(**kwargs)
 
-        str_emissao = datetime.now().isoformat()
+        data_emissao = kwargs.pop('data_emissao', datetime.now())
+        str_emissao = data_emissao.isoformat()
 
         nfse = {
             'data_emissao': str_emissao,
@@ -328,9 +343,8 @@ class Nfse(BaseNFSeWrapper):
 
     def create_nfse(self, reference, **kwargs):
         payload_dict = self.__prepare(**kwargs)
-        payload = json.dumps(payload_dict)
-        response = self.do_post_request(
-            self.url(reference=reference), data=payload)
+        payload = json.dumps(payload_dict, cls=DecimalEncoder)
+        response = self.do_post_request(self.url(reference=reference), data=payload)
         return response
 
     def get_nfse(self, reference):
@@ -339,7 +353,7 @@ class Nfse(BaseNFSeWrapper):
                 'Referência não informada',
                 code=NFSeException.EC_BAD_REQUEST
             )
-        response = self.do_get_request(self.url(reference=reference))
+        response = self.do_get_request(self.url(relative='/' + reference))
         return response
 
     def cancel_nfse(self, reference, reason):
@@ -354,18 +368,29 @@ class Nfse(BaseNFSeWrapper):
                 NFSeException.EC_BAD_REQUEST,
             )
         response = self.do_delete_request(
-            self.url(reference=reference), data=json.dumps({
+            self.url(relative='/' + reference), data=json.dumps({
                 'justificativa': reason,
             }))
         return response
 
-    def resent_email(self, reference):
+    def resent_email(self, reference, emails=None):
         if not reference:
             raise NFSeException(
                 'Referência não informada',
                 code=NFSeException.EC_BAD_REQUEST
             )
+
+        if emails:
+            if not isinstance(emails, list):
+                raise NFSeException(
+                    'Emails não é um objeto lista',
+                    code=NFSeException.EC_PROGRAMMING
+                )
+            emails = json.dumps({'emails': emails})
+
         response = self.do_post_request(
-            self.url(relative='/{0}/email/'.format(reference))
+            self.url(relative='/{0}/email/'.format(reference)),
+            data=emails
         )
         return response
+

@@ -3,7 +3,7 @@ certifi==2022.12.7
 chardet==3.0.4
 decorator==4.4.1
 idna==2.8
-ipython==7.9.0
+ipython==8.10.0
 ipython-genutils==0.2.0
 jedi==0.15.1
 parso==0.5.1
